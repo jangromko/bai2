@@ -1,0 +1,10 @@
+Zalogowany jako: <%= @info.username %> – <%= link "Wyloguj", to: page_path(@conn, :logout) %> <br/>
+
+Ostatnie udane logowanie: <%= @info.udane %> <br/>
+Ostatnie nieudane logowanie: <%= @info.nieudane %> <br/>
+
+<form action="<%= page_path(@conn, :set_account_details) %>" method="get">
+  Blokowanie konta po n nieudanych próbach: <input type="checkbox" name="blokowanie" <%= if @info.blokowanie do %>checked<% end %>/><br/>
+  Ile nieudanych prób logowania blokuje konto: <input type="number" name="ile_blokuje" value="<%= @info.ile_blokuje %>"/><br/>
+  <input type="submit" value="Zapisz">
+</form>

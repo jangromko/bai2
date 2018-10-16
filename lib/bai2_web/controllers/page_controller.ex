@@ -44,6 +44,25 @@ defmodule Bai2Web.PageController do
     end
   end
 
+  def account_details(conn, params) do
+    render conn, "account_details.html", info: User.info(get_session(conn, :username))
+  end
+
+  def set_account_details(conn, params) do
+    blokowanie = 
+      if params["blokowanie"] == "on" do
+        true
+      else
+        false
+      end
+
+    Repo.get_by!(User, username: get_session(conn, :username))
+    |> User.changeset(%{ile_nieudanych_blokuje: params["ile_blokuje"], blokowanie_konta_wlaczone: blokowanie})
+    |> Repo.update!()
+
+    render conn, "index.html", username: get_session(conn, :username)
+  end
+
 
   # Plugi
 

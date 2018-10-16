@@ -60,4 +60,16 @@ defmodule Bai2.User do
 
     success
   end
+
+
+  def info(username) do
+    u = Repo.get_by!(__MODULE__, username: username)
+
+    %{id: u.id,
+      username: u.username,
+      udane: u.ostatnie_udane_logowanie,
+      nieudane: u.ostatnie_nieudane_logowanie,
+      blokowanie: u.blokowanie_konta_wlaczone,
+      ile_blokuje: u.ile_nieudanych_blokuje}
+  end
 end

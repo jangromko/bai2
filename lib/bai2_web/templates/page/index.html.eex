@@ -1,1 +1,2 @@
-Zalogowany jako: <%= @username %> - <%= link "Wyloguj", to: page_path(@conn, :logout) %>
+Zalogowany jako: <%= @username %> – <%= link "Wyloguj", to: page_path(@conn, :logout) %><br/>
+<%= link "Szczegóły i zarządzanie kontem", to: page_path(@conn, :account_details) %>

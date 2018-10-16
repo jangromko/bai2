@@ -23,6 +23,8 @@ defmodule Bai2Web.Router do
     get "/logout", PageController, :logout
     get "/register", PageController, :register
     post "/register", PageController, :register_post
+    get "/account_details", PageController, :account_details
+    get "/set_account_details", PageController, :set_account_details
   end
 
   # Other scopes may use custom stacks.
