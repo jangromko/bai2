@@ -17,6 +17,12 @@ defmodule Bai2Web.Router do
     pipe_through :browser # Use the default browser stack
 
     get "/", PageController, :index
+
+    get "/login", PageController, :login
+    post "/login", PageController, :log_in
+    get "/logout", PageController, :logout
+    get "/register", PageController, :register
+    post "/register", PageController, :register_post
   end
 
   # Other scopes may use custom stacks.

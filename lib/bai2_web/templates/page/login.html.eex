@@ -1,0 +1,6 @@
+<%= form_for @conn, page_path(@conn, :log_in), fn f -> %>
+  Login: <%= text_input f, :username %><br/>
+  Hasło: <%= password_input f, :password %><br/>
+  <%= submit "Zaloguj się"%>
+<% end %><br/>
+<%= link "Zarejestruj się", to: page_path(@conn, :register)%>

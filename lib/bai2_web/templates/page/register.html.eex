@@ -1,0 +1,5 @@
+<%= form_for @conn, page_path(@conn, :register_post), fn f -> %>
+Login: <%= text_input f, :username %> <br/>
+Hasło: <%= password_input f, :password %> </br>
+<%= submit "Zarejestruj"%>
+<% end %>
