@@ -39,7 +39,7 @@ defmodule Bai2Web.PageController do
 
   def register_post(conn, %{"username" => username, "password" => password}) do
     case Repo.insert(User.changeset(%User{}, %{username: username, password: password })) do
-      {:ok, %User{}} -> put_session(conn, :username, username) |> redirect(to: page_path(conn, :index))
+      {:ok, %User{}} -> render conn, "login.html"
       _ -> render conn, "register.html"
     end
   end

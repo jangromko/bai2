@@ -33,6 +33,31 @@ defmodule Bai2.User do
               where: user.username == ^username
               and user.password == ^password
               and user.zablokowane == false
-    Repo.one(query)
+    
+    success = Repo.one(query)
+
+    user = Repo.get_by!(__MODULE__, username: username)
+
+    if is_nil(success) do
+      nieudane = user.liczba_nieudanych_logowan + 1
+
+      zablokuj =
+        if user.blokowanie_konta_wlaczone and nieudane >= user.ile_nieudanych_blokuje do
+          true
+        else
+          false
+        end
+
+      user
+      |> Ecto.Changeset.change(%{zablokowane: zablokuj, liczba_nieudanych_logowan: nieudane, ostatnie_nieudane_logowanie: DateTime.utc_now()})
+      |> Repo.update!()
+
+    else
+      user
+      |> Ecto.Changeset.change(%{liczba_nieudanych_logowan: 0, ostatnie_udane_logowanie: DateTime.utc_now()})
+      |> Repo.update!()
+    end
+
+    success
   end
 end

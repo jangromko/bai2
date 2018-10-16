@@ -7,9 +7,9 @@ defmodule Bai2.Repo.Migrations.CreateUsers do
       add :password, :string
       add :ostatnie_udane_logowanie, :utc_datetime
       add :ostatnie_nieudane_logowanie, :utc_datetime
-      add :liczba_nieudanych_logowan, :integer
-      add :blokowanie_konta_wlaczone, :boolean
-      add :ile_nieudanych_blokuje, :integer
+      add :liczba_nieudanych_logowan, :integer, default: 0
+      add :blokowanie_konta_wlaczone, :boolean, default: false
+      add :ile_nieudanych_blokuje, :integer, default: 5
       add :zablokowane, :boolean, default: false
 
       timestamps()
