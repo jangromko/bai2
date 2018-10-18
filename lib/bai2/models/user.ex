@@ -13,6 +13,7 @@ defmodule Bai2.User do
     field :blokowanie_konta_wlaczone, :boolean
     field :ile_nieudanych_blokuje, :integer
     field :zablokowane, :boolean
+    field :nie_istnieje, :boolean
 
     timestamps()
   end
@@ -29,16 +30,24 @@ defmodule Bai2.User do
   end
 
   def login(username, password) do
+    %__MODULE__{
+      username: username,
+      ostatnie_nieudane_logowanie: DateTime.utc_now(),
+      liczba_nieudanych_logowan: 0,
+      nie_istnieje: true,
+    }
+      |> Repo.insert(on_conflict: :nothing)
+
     query = from user in __MODULE__,
               where: user.username == ^username
-              and user.password == ^password
-              and user.zablokowane == false
-    
-    success = Repo.one(query)
 
-    user = Repo.get_by!(__MODULE__, username: username)
+    user = Repo.get_by(__MODULE__, username: username)
 
-    if is_nil(success) do
+    if user.password == password and not user.zablokowane and not user.nie_istnieje do
+      user
+      |> Ecto.Changeset.change(%{liczba_nieudanych_logowan: 0, ostatnie_udane_logowanie: DateTime.utc_now()})
+      |> Repo.update!()
+    else
       nieudane = user.liczba_nieudanych_logowan + 1
 
       zablokuj =
@@ -49,16 +58,10 @@ defmodule Bai2.User do
         end
 
       user
-      |> Ecto.Changeset.change(%{zablokowane: zablokuj, liczba_nieudanych_logowan: nieudane, ostatnie_nieudane_logowanie: DateTime.utc_now()})
-      |> Repo.update!()
-
-    else
-      user
-      |> Ecto.Changeset.change(%{liczba_nieudanych_logowan: 0, ostatnie_udane_logowanie: DateTime.utc_now()})
-      |> Repo.update!()
+        |> Ecto.Changeset.change(%{zablokowane: zablokuj, liczba_nieudanych_logowan: nieudane, ostatnie_nieudane_logowanie: DateTime.utc_now()})
+        |> Repo.update!()
+      nil
     end
-
-    success
   end
 
 

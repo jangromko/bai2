@@ -11,8 +11,11 @@ defmodule Bai2.Repo.Migrations.CreateUsers do
       add :blokowanie_konta_wlaczone, :boolean, default: false
       add :ile_nieudanych_blokuje, :integer, default: 5
       add :zablokowane, :boolean, default: false
+      add :nie_istnieje, :boolean, default: false
 
       timestamps()
     end
+
+    create index(:users, [:username], unique: true)
   end
 end
