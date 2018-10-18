@@ -30,37 +30,46 @@ defmodule Bai2.User do
   end
 
   def login(username, password) do
-    %__MODULE__{
-      username: username,
-      ostatnie_nieudane_logowanie: DateTime.utc_now(),
-      liczba_nieudanych_logowan: 0,
-      nie_istnieje: true,
-    }
-      |> Repo.insert(on_conflict: :nothing)
+    fun = fn ->
+      %__MODULE__{
+        username: username,
+        ostatnie_nieudane_logowanie: DateTime.utc_now(),
+        liczba_nieudanych_logowan: 0,
+        nie_istnieje: true,
+      }
+        |> Repo.insert(on_conflict: :nothing)
 
-    query = from user in __MODULE__,
-              where: user.username == ^username
+      query = from user in __MODULE__,
+                where: user.username == ^username,
+                lock: "FOR UPDATE"
 
-    user = Repo.get_by(__MODULE__, username: username)
+      user = Repo.one(query)
 
-    if user.password == password and not user.zablokowane and not user.nie_istnieje do
-      user
-      |> Ecto.Changeset.change(%{liczba_nieudanych_logowan: 0, ostatnie_udane_logowanie: DateTime.utc_now()})
-      |> Repo.update!()
-    else
-      nieudane = user.liczba_nieudanych_logowan + 1
+      czas = DateTime.diff(DateTime.utc_now(), user.ostatnie_nieudane_logowanie || DateTime.utc_now()) > user.liczba_nieudanych_logowan*30
 
-      zablokuj =
-        if user.blokowanie_konta_wlaczone and nieudane >= user.ile_nieudanych_blokuje do
-          true
-        else
-          false
-        end
+      cond do
+        user.password == password and not user.zablokowane
+        and not user.nie_istnieje and czas ->
+          user
+          |> Ecto.Changeset.change(%{liczba_nieudanych_logowan: 0, ostatnie_udane_logowanie: DateTime.utc_now()})
+          |> Repo.update!()
 
-      user
-        |> Ecto.Changeset.change(%{zablokowane: zablokuj, liczba_nieudanych_logowan: nieudane, ostatnie_nieudane_logowanie: DateTime.utc_now()})
-        |> Repo.update!()
-      nil
+        not czas -> nil
+
+        true ->
+          nieudane = user.liczba_nieudanych_logowan + 1
+
+          zablokuj = user.blokowanie_konta_wlaczone and nieudane >= user.ile_nieudanych_blokuje
+
+          user
+            |> Ecto.Changeset.change(%{zablokowane: zablokuj, liczba_nieudanych_logowan: nieudane, ostatnie_nieudane_logowanie: DateTime.utc_now()})
+            |> Repo.update!()
+          nil
+      end
+    end
+
+    case Repo.transaction(fun) do
+      {_, v} -> v
     end
   end
 
