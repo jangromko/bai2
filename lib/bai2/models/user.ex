@@ -45,14 +45,14 @@ defmodule Bai2.User do
 
       user = Repo.one(query)
 
-      czas = DateTime.diff(DateTime.utc_now(), user.ostatnie_nieudane_logowanie || DateTime.utc_now()) > user.liczba_nieudanych_logowan*30
+      czas = DateTime.diff(DateTime.utc_now(), user.ostatnie_nieudane_logowanie || DateTime.utc_now()) >= user.liczba_nieudanych_logowan*30
 
       cond do
         user.password == password and not user.zablokowane
         and not user.nie_istnieje and czas ->
-          user
+          {:ok, user.liczba_nieudanych_logowan, user
           |> Ecto.Changeset.change(%{liczba_nieudanych_logowan: 0, ostatnie_udane_logowanie: DateTime.utc_now()})
-          |> Repo.update!()
+          |> Repo.update!() }
 
         not czas -> nil
 

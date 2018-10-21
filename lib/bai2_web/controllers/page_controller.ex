@@ -3,7 +3,7 @@ defmodule Bai2Web.PageController do
   alias Bai2.User
   alias Bai2.Repo
 
-  plug :check_logged when action in [:index]
+  plug :check_logged when action in [:index, :account_details]
 
   def index(conn, _params) do
     render conn, "index.html", username: get_session(conn, :username)
@@ -21,7 +21,7 @@ defmodule Bai2Web.PageController do
 
   def log_in(conn, %{"username" => username, "password" => password }) do
     case User.login(username, password) do
-      %User{} -> conn |> put_session(:username, username) |> redirect(to: page_path(conn, :index))
+      {:ok, liczba, %User{}} -> conn |> put_session(:username, username) |> put_session(:liczba_nieudanych, liczba) |> redirect(to: page_path(conn, :index))
       nil -> redirect conn, to: page_path(conn, :index)
     end
   end
@@ -45,7 +45,7 @@ defmodule Bai2Web.PageController do
   end
 
   def account_details(conn, params) do
-    render conn, "account_details.html", info: User.info(get_session(conn, :username))
+    render conn, "account_details.html", info: User.info(get_session(conn, :username)), liczba: get_session(conn, :liczba_nieudanych)
   end
 
   def set_account_details(conn, params) do
