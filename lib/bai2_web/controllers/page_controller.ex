@@ -38,9 +38,19 @@ defmodule Bai2Web.PageController do
   end
 
   def register_post(conn, %{"username" => username, "password" => password}) do
-    case Repo.insert(User.changeset(%User{}, %{username: username, password: password })) do
-      {:ok, %User{}} -> render conn, "login.html"
-      _ -> render conn, "register.html"
+    user = Repo.get_by(User, username: username)
+
+    if is_nil(user) or user.nie_istnieje do
+      if not is_nil(user) and user.nie_istnieje do
+        Repo.delete!(user)
+      end
+
+      case Repo.insert(User.changeset(%User{}, %{username: username, password: password })) do
+        {:ok, %User{}} -> render conn, "login.html"
+        _ -> render conn, "register.html"
+      end
+    else
+      render conn, "register.html"
     end
   end
 

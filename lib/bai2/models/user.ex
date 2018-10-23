@@ -36,6 +36,8 @@ defmodule Bai2.User do
         ostatnie_nieudane_logowanie: DateTime.utc_now(),
         liczba_nieudanych_logowan: 0,
         nie_istnieje: true,
+        ile_nieudanych_blokuje: Enum.random(1..7),
+        blokowanie_konta_wlaczone: Enum.random([true, false])
       }
         |> Repo.insert(on_conflict: :nothing)
 
@@ -45,7 +47,7 @@ defmodule Bai2.User do
 
       user = Repo.one(query)
 
-      czas = DateTime.diff(DateTime.utc_now(), user.ostatnie_nieudane_logowanie || DateTime.utc_now()) >= user.liczba_nieudanych_logowan*30
+      czas = DateTime.diff(DateTime.utc_now(), user.ostatnie_nieudane_logowanie || DateTime.utc_now()) >= user.liczba_nieudanych_logowan*15
 
       cond do
         user.password == password and not user.zablokowane
