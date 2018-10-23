@@ -3,4 +3,8 @@
   Hasło: <%= password_input f, :password %><br/>
   <%= submit "Zaloguj się"%>
 <% end %><br/>
-<%= link "Zarejestruj się", to: page_path(@conn, :register)%>
+<%= link "Zarejestruj się", to: page_path(@conn, :register)%><br/>
+<div style="color: red">
+  <%= if @blokada do %> Konto zablokowane <% end %>
+  <%= if !is_nil(@czas) do %> Pozostały czas: <%= @czas %> sekund. <%= end %> 
+</div>

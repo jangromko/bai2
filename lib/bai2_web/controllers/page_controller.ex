@@ -12,12 +12,14 @@ defmodule Bai2Web.PageController do
   def login(conn, %{"username" => username, "password" => password }) do
     case User.login(username, password) do
       {:ok, liczba, %User{}} -> conn |> put_session(:username, username) |> put_session(:liczba_nieudanych, liczba) |> redirect(to: page_path(conn, :index))
+      {:blokada, czas} -> render conn, "login.html", czas: czas, blokada: true
+      :blokada -> render conn, "login.html", czas: nil, blokada: true
       nil -> redirect conn, to: page_path(conn, :index)
     end
   end
 
   def login(conn, _) do
-    render conn, "login.html"
+    render conn, "login.html", blokada: false, czas: nil
   end
 
   def logout(conn, _) do
