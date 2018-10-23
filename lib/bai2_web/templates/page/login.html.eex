@@ -1,4 +1,4 @@
-<%= form_for @conn, page_path(@conn, :log_in), fn f -> %>
+<%= form_for @conn, page_path(@conn, :login), [method: :get], fn f -> %>
   Login: <%= text_input f, :username %><br/>
   Hasło: <%= password_input f, :password %><br/>
   <%= submit "Zaloguj się"%>

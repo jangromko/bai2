@@ -9,6 +9,13 @@ defmodule Bai2Web.PageController do
     render conn, "index.html", username: get_session(conn, :username)
   end
 
+  def login(conn, %{"username" => username, "password" => password }) do
+    case User.login(username, password) do
+      {:ok, liczba, %User{}} -> conn |> put_session(:username, username) |> put_session(:liczba_nieudanych, liczba) |> redirect(to: page_path(conn, :index))
+      nil -> redirect conn, to: page_path(conn, :index)
+    end
+  end
+
   def login(conn, _) do
     render conn, "login.html"
   end
@@ -19,12 +26,6 @@ defmodule Bai2Web.PageController do
       |> redirect(to: page_path(conn, :index))
   end
 
-  def log_in(conn, %{"username" => username, "password" => password }) do
-    case User.login(username, password) do
-      {:ok, liczba, %User{}} -> conn |> put_session(:username, username) |> put_session(:liczba_nieudanych, liczba) |> redirect(to: page_path(conn, :index))
-      nil -> redirect conn, to: page_path(conn, :index)
-    end
-  end
 
   defp check_logged(conn, _) do
     case get_session(conn, :username) do
@@ -33,11 +34,7 @@ defmodule Bai2Web.PageController do
     end
   end
 
-  def register(conn, _) do
-    render conn, "register.html"
-  end
-
-  def register_post(conn, %{"username" => username, "password" => password}) do
+  def register(conn, %{"username" => username, "password" => password}) do
     user = Repo.get_by(User, username: username)
 
     if is_nil(user) or user.nie_istnieje do
@@ -53,6 +50,12 @@ defmodule Bai2Web.PageController do
       render conn, "register.html"
     end
   end
+
+  def register(conn, _) do
+    render conn, "register.html"
+  end
+
+  
 
   def account_details(conn, params) do
     render conn, "account_details.html", info: User.info(get_session(conn, :username)), liczba: get_session(conn, :liczba_nieudanych)
