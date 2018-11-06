@@ -47,7 +47,7 @@ defmodule Bai2.User do
 
       user = Repo.one(query)
 
-      czas = DateTime.diff(DateTime.utc_now(), user.ostatnie_nieudane_logowanie || DateTime.utc_now()) >= user.liczba_nieudanych_logowan*15
+      czas = DateTime.diff(DateTime.utc_now(), user.ostatnie_nieudane_logowanie || DateTime.utc_now()) >= user.liczba_nieudanych_logowan*5
 
       cond do
         user.password == password and not user.zablokowane
@@ -56,7 +56,7 @@ defmodule Bai2.User do
           |> Ecto.Changeset.change(%{liczba_nieudanych_logowan: 0, ostatnie_udane_logowanie: DateTime.utc_now()})
           |> Repo.update!() }
 
-        not czas -> {:blokada,  user.liczba_nieudanych_logowan*15 - DateTime.diff(DateTime.utc_now(), user.ostatnie_nieudane_logowanie) }
+        not czas -> {:blokada,  user.liczba_nieudanych_logowan*5 - DateTime.diff(DateTime.utc_now(), user.ostatnie_nieudane_logowanie) }
 
         true ->
           nieudane = user.liczba_nieudanych_logowan + 1
@@ -69,6 +69,8 @@ defmodule Bai2.User do
 
           if zablokuj do
             :blokada
+          else
+            {:blokada,  5 * nieudane }
           end
       end
     end

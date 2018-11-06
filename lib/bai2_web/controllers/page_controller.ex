@@ -45,7 +45,7 @@ defmodule Bai2Web.PageController do
       end
 
       case Repo.insert(User.changeset(%User{}, %{username: username, password: password })) do
-        {:ok, %User{}} -> render conn, "login.html"
+        {:ok, %User{}} -> render conn, "login.html", blokada: false, czas: nil
         _ -> render conn, "register.html"
       end
     else
