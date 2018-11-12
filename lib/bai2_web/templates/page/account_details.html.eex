@@ -1,6 +1,6 @@
 Zalogowany jako: <%= @info.username %> – <%= link "Wyloguj", to: page_path(@conn, :logout) %> <br/>
 
-Ostatnie udane logowanie: <%= @info.udane %> <br/>
+Ostatnie udane logowanie: <%= @ostatnie_udane %> <br/>
 Ostatnie nieudane logowanie: <%= @info.nieudane %> <br/>
 Liczba nieudanych logowań: <%= @liczba %> <br/>
 

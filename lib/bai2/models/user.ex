@@ -54,7 +54,7 @@ defmodule Bai2.User do
         and not user.nie_istnieje and czas ->
           {:ok, user.liczba_nieudanych_logowan, user
           |> Ecto.Changeset.change(%{liczba_nieudanych_logowan: 0, ostatnie_udane_logowanie: DateTime.utc_now()})
-          |> Repo.update!() }
+          |> Repo.update!(), user.ostatnie_udane_logowanie }
 
         not czas -> {:blokada,  user.liczba_nieudanych_logowan*5 - DateTime.diff(DateTime.utc_now(), user.ostatnie_nieudane_logowanie) }
 

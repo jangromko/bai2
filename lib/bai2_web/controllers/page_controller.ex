@@ -11,7 +11,7 @@ defmodule Bai2Web.PageController do
 
   def login(conn, %{"username" => username, "password" => password }) do
     case User.login(username, password) do
-      {:ok, liczba, %User{}} -> conn |> put_session(:username, username) |> put_session(:liczba_nieudanych, liczba) |> redirect(to: page_path(conn, :index))
+      {:ok, liczba, %User{}, ostatnie_udane} -> conn |> put_session(:username, username) |> put_session(:liczba_nieudanych, liczba) |> put_session(:ostatnie_udane, ostatnie_udane) |> redirect(to: page_path(conn, :index))
       {:blokada, czas} -> render conn, "login.html", czas: czas, blokada: true
       :blokada -> render conn, "login.html", czas: nil, blokada: true
       nil -> redirect conn, to: page_path(conn, :index)
@@ -60,7 +60,7 @@ defmodule Bai2Web.PageController do
   
 
   def account_details(conn, params) do
-    render conn, "account_details.html", info: User.info(get_session(conn, :username)), liczba: get_session(conn, :liczba_nieudanych)
+    render conn, "account_details.html", info: User.info(get_session(conn, :username)), liczba: get_session(conn, :liczba_nieudanych), ostatnie_udane: get_session(conn, :ostatnie_udane)
   end
 
   def set_account_details(conn, params) do
